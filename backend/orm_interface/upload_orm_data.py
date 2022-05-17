@@ -41,11 +41,32 @@ class Uploader:
             session.delete(study_program)
         session.commit()
 
+    #newly added method
+    def delete_all_e3_courses(self):
+        all_e3_courses = session.query(E3_Courses).all()
+        for e3_courses in all_e3_courses:
+            session.delete(e3_courses)
+        session.commit()
+    
+    #newly added method
+    def delete_e3_avg_rating(self):
+        all_avg_ratings = session.query(Avg_ratings).all()
+        for avg_rating in all_avg_ratings:
+            session.delete(avg_rating)
+        session.commit()
+
+    
+
+    
+
     def upload_data(self):
         self.delete_all_lectures()
         self.delete_all_timetables()
         self.delete_all_professors()
         self.delete_all_studyprograms()
+        #calling two new methods
+        self.delete_all_e3_courses()
+        self.delete_e3_avg_rating()
 
         professors_dict = {}
         studyprograms_dict = {}
@@ -143,8 +164,11 @@ class Uploader:
                                            dates)
                     temp_lecture.timetables.append(temp_entry)
                 session.add(temp_lecture)
+               
 
             data_file.close()
 
         session.commit()
         session.close()
+
+

@@ -1,3 +1,5 @@
+from crypt import methods
+from orm_interface.entities.e3_entity.avg_ratings import Avg_ratings
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token
 from .extensions import bcrypt
@@ -80,3 +82,30 @@ def scrape():
     scraper = Process(target=run, args=(config, insight_url, e3_url,))
     scraper.start()
     return ""
+
+
+@main.route('/addmockup', methods=['POST'])
+def addData():
+    id= request.get_json()['id']
+    fairness = request.get_json()['fairness']
+    support = request.get_json()['support']
+    material = request.get_json()['material']
+    fun = request.get_json()['fun']
+    comprehensibility = request.get_json()['comprehensibility']
+    interesting = request.get_json()['interesting']
+    grade_effort = request.get_json()['grade_effort']
+
+    userTable = Avg_ratings(
+        id=id,
+        fairness=fairness,
+        support=support,
+        material=material,
+        fun=fun,
+        comprehensibility=comprehensibility,
+        intersting=interesting,
+        grade_effort=grade_effort
+    )
+    session.add(userTable)
+    session.commit()
+    return jsonify({"success"})
+
