@@ -95,6 +95,9 @@ def run(config, insight_url, e3_url):
     with open(e3_ratings_file, "w") as file:
         file.write(json.dumps(avg_ratings))
 
+    ########Trying to read and save avg_ratings
+    uploader.upload_e3_courses()
+    
     # 10. remove temp files
     os.remove(temp_e3)
     os.remove(temp_ratings)

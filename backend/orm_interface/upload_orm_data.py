@@ -1,5 +1,6 @@
 import json
 import io
+from orm_interface.entities.e3_entity.e3_courses import E3_Courses
 from orm_interface.entities.lecture import Lecture
 from orm_interface.entities.studyprogram import StudyProgram
 from orm_interface.entities.professor import Professor
@@ -12,6 +13,7 @@ backend_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."
 
 DATA_DIRECTORY = os.path.abspath(os.path.join(backend_directory, "scrapers", "merged_data.json"))
 STUDYPROGRAMS_DIRECTORY = os.path.abspath(os.path.join(backend_directory, "scrapers", "study_programs.json"))
+E3_COURSES = os.path.abspath(os.path.join(backend_directory, "bin", "e3_courses.json"))
 
 Base.metadata.create_all(engine)
 session = Session()
@@ -47,26 +49,13 @@ class Uploader:
         for e3_courses in all_e3_courses:
             session.delete(e3_courses)
         session.commit()
-    
-    #newly added method
-    def delete_e3_avg_rating(self):
-        all_avg_ratings = session.query(Avg_ratings).all()
-        for avg_rating in all_avg_ratings:
-            session.delete(avg_rating)
-        session.commit()
-
-    
-
-    
 
     def upload_data(self):
         self.delete_all_lectures()
         self.delete_all_timetables()
         self.delete_all_professors()
         self.delete_all_studyprograms()
-        #calling two new methods
-        self.delete_all_e3_courses()
-        self.delete_e3_avg_rating()
+        
 
         professors_dict = {}
         studyprograms_dict = {}
@@ -170,5 +159,75 @@ class Uploader:
 
         session.commit()
         session.close()
+
+
+
+
+    #####sample++++
+    def upload_e3_courses(self):
+        self.delete_all_e3_courses()
+
+        with open(E3_COURSES, 'r', encoding='utf8') as e3_courses:
+            courses = json.load(e3_courses)
+
+            for course in courses:
+                selected = course["selected"] 
+                title = course["Title"]   
+                link = course["Link"]    
+                catalog = course["catalog"] 
+                type = course["Type"]   
+                sws = course["SWS"]    
+                num_part = course["Erwartete Teilnehmer"]    
+                max_part = course["Max. Teilnehmer"]    
+                credit = course["Credits"]    
+                language = course["Language"]    
+                description = course["Description"]    
+                location = course["Location"]    
+                exam_type = course["Exam"]    
+                time_manual = course["Times_manual"]    
+                aus_ing_bach = course["Ausgeschlossen_Ingenieurwissenschaftencd_Bachelor"]    
+                fairness = course["fairness"]    
+                support = course["support"]    
+                material = course["material"]    
+                fun = course["fun"]    
+                comprehensibility = course["comprehensibility"]    
+                interesting = course["interesting"]    
+                grade_effort = course["grade_effort"]    
+                
+
+                temp_e3 = E3_Courses(
+                    selected=selected,
+                    title=title,
+                    link=link,
+                    catalog=catalog,
+                    type=type,
+                    sws=sws,
+                    num_expected_participants=num_part,
+                    max_participants=max_part,
+                    credit=credit,
+                    language=language,
+                    description=description,
+                    location=location,
+                    exam_type=exam_type,
+                    time_manual=time_manual,
+                    ausgeschlossen_ingenieurwissenschaften_bachelor=aus_ing_bach,
+                    fairness=fairness,
+                    support=support,
+                    material=material,
+                    fun=fun,
+                    comprehensibility=comprehensibility,
+                    interesting=interesting,
+                    grade_effort=grade_effort
+            
+                )
+                session.add(temp_e3)
+                print(temp_e3)
+
+            e3_courses.close()
+
+        session.commit()
+        session.close()
+        
+        
 
 

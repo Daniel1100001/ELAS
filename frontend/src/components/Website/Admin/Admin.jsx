@@ -129,10 +129,7 @@ export default function Admin(props) {
                     color="primary"
                     className={classes.button}
                     endIcon={<ArrowForwardIcon />}
-                    disabled={
-                      scrapeState === "running..." ||
-                      scrapeState === "checking..."
-                    }
+                   
                     type="submit"
                   >
                     Scrape Now
